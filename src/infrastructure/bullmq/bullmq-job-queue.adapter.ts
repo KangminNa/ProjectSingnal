@@ -1,10 +1,10 @@
-import { Injectable, Inject, Logger } from '@nestjs/common';
+import { Injectable, Logger, OnModuleDestroy } from '@nestjs/common';
 import { Queue } from 'bullmq';
 import { ConfigService } from '@nestjs/config';
 import { JobQueue, JobOptions } from '@domain/ports/outbound/job-queue.port';
 
 @Injectable()
-export class BullMqJobQueueAdapter implements JobQueue {
+export class BullMqJobQueueAdapter implements JobQueue, OnModuleDestroy {
   private readonly logger = new Logger(BullMqJobQueueAdapter.name);
   private readonly queues = new Map<string, Queue>();
   private readonly redisHost: string;
@@ -15,14 +15,26 @@ export class BullMqJobQueueAdapter implements JobQueue {
     this.redisPort = this.configService.get<number>('redis.port', 6379);
   }
 
+  async onModuleDestroy(): Promise<void> {
+    const closePromises: Promise<void>[] = [];
+    for (const [name, queue] of this.queues) {
+      this.logger.log(`Closing queue: ${name}`);
+      closePromises.push(queue.close());
+    }
+    await Promise.allSettled(closePromises);
+    this.queues.clear();
+    this.logger.log('All BullMQ queues closed');
+  }
+
   private getQueue(queueName: string): Queue {
-    if (!this.queues.has(queueName)) {
-      const queue = new Queue(queueName, {
+    let queue = this.queues.get(queueName);
+    if (!queue) {
+      queue = new Queue(queueName, {
         connection: { host: this.redisHost, port: this.redisPort },
       });
       this.queues.set(queueName, queue);
     }
-    return this.queues.get(queueName)!;
+    return queue;
   }
 
   async enqueue<T>(queueName: string, job: T, opts?: JobOptions): Promise<void> {

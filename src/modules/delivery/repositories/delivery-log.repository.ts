@@ -1,5 +1,5 @@
 import { Injectable, Inject } from '@nestjs/common';
-import { eq, desc, count } from 'drizzle-orm';
+import { eq, desc, count, sql } from 'drizzle-orm';
 import { DRIZZLE } from '@common/constants/injection-tokens';
 import { deliveryLogs } from '@infrastructure/database/schema';
 import {
@@ -19,25 +19,29 @@ export class DeliveryLogRepository implements IDeliveryLogRepository {
   }
 
   async updateStatus(id: string, status: DeliveryStatus, error?: string): Promise<void> {
-    const update: any = { status };
+    const update: Record<string, unknown> = { status };
     if (status === 'delivered') update.deliveredAt = new Date();
     if (error) update.lastError = error;
     await this.db.update(deliveryLogs).set(update).where(eq(deliveryLogs.id, id));
   }
 
   async incrementAttempt(id: string): Promise<void> {
-    // Using raw SQL for atomic increment
-    await this.db.execute(`UPDATE delivery_logs SET attempt_count = attempt_count + 1 WHERE id = '${id}'`);
+    await this.db
+      .update(deliveryLogs)
+      .set({ attemptCount: sql`${deliveryLogs.attemptCount} + 1` })
+      .where(eq(deliveryLogs.id, id));
   }
 
   async listByProject(projectId: string, limit = 50, offset = 0): Promise<DeliveryLog[]> {
+    const safeLimit = Math.min(Math.max(1, limit), 200);
+    const safeOffset = Math.max(0, offset);
     const rows = await this.db
       .select()
       .from(deliveryLogs)
       .where(eq(deliveryLogs.projectId, projectId))
       .orderBy(desc(deliveryLogs.createdAt))
-      .limit(limit)
-      .offset(offset);
+      .limit(safeLimit)
+      .offset(safeOffset);
     return rows.map((r: any) => this.toEntity(r));
   }
 

@@ -1,5 +1,5 @@
 import { Injectable, Inject } from '@nestjs/common';
-import { eq, and, like } from 'drizzle-orm';
+import { eq, and } from 'drizzle-orm';
 import { DRIZZLE } from '@common/constants/injection-tokens';
 import { subscriptions, consumers } from '@infrastructure/database/schema';
 import {
@@ -8,6 +8,7 @@ import {
 } from '@domain/ports/outbound/repositories/subscription.repository.port';
 import { Subscription } from '@domain/entities/subscription.entity';
 import { ConsumerTarget, ConsumerType } from '@common/types/consumer.types';
+import { matchesEventPattern } from '@common/utils/pattern-matcher';
 
 @Injectable()
 export class SubscriptionRepository implements ISubscriptionRepository {
@@ -39,6 +40,7 @@ export class SubscriptionRepository implements ISubscriptionRepository {
         endpoint: consumers.endpoint,
         subscriptionId: subscriptions.id,
         policyId: subscriptions.policyId,
+        eventPattern: subscriptions.eventPattern,
       })
       .from(subscriptions)
       .innerJoin(consumers, eq(subscriptions.consumerId, consumers.id))
@@ -51,7 +53,7 @@ export class SubscriptionRepository implements ISubscriptionRepository {
       );
 
     return rows
-      .filter((r: any) => this.matchesPattern(eventType, r.eventPattern))
+      .filter((r: any) => matchesEventPattern(eventType, r.eventPattern))
       .map((r: any) => ({
         consumerId: r.consumerId,
         consumerType: r.consumerType as ConsumerType,
@@ -63,11 +65,6 @@ export class SubscriptionRepository implements ISubscriptionRepository {
 
   async updateStatus(id: string, status: string): Promise<void> {
     await this.db.update(subscriptions).set({ status }).where(eq(subscriptions.id, id));
-  }
-
-  private matchesPattern(eventType: string, pattern: string): boolean {
-    const regex = new RegExp('^' + pattern.replace(/\*/g, '.*') + '$');
-    return regex.test(eventType);
   }
 
   private toEntity(row: any): Subscription {

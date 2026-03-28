@@ -11,6 +11,6 @@ export interface ProjectRepository {
   findById(id: string): Promise<Project | null>;
   findBySlug(slug: string): Promise<Project | null>;
   listByUserId(userId: string): Promise<Project[]>;
-  listAll(): Promise<Project[]>;
+  listAll(limit?: number): Promise<Project[]>;
   updateStatus(id: string, status: string): Promise<void>;
 }

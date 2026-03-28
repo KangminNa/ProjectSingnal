@@ -8,6 +8,7 @@ export interface DeliveryInput {
   consumerId: string;
   channel: DeliveryChannel;
   payload: Record<string, unknown>;
+  endpoint?: string;
   metadata?: Record<string, unknown>;
 }
 
@@ -16,4 +17,12 @@ export interface DeliveryResult {
   channel: DeliveryChannel;
   deliveredAt?: Date;
   error?: string;
+  retryable?: boolean;
+  details?: ChannelDeliveryDetails;
 }
+
+export type ChannelDeliveryDetails =
+  | { type: 'realtime'; room: string }
+  | { type: 'webhook'; httpStatus?: number; retryAfter?: number }
+  | { type: 'push'; deviceTokenValid?: boolean; provider?: string }
+  | { type: 'email'; messageId?: string; provider?: string };

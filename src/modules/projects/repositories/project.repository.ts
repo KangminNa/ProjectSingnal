@@ -32,8 +32,9 @@ export class ProjectRepository implements IProjectRepository {
     return rows.map((r: any) => this.toEntity(r));
   }
 
-  async listAll(): Promise<Project[]> {
-    const rows = await this.db.select().from(projects);
+  async listAll(limit = 100): Promise<Project[]> {
+    const safeLimit = Math.min(Math.max(1, limit), 500);
+    const rows = await this.db.select().from(projects).limit(safeLimit);
     return rows.map((r: any) => this.toEntity(r));
   }
 

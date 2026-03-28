@@ -15,8 +15,16 @@ export class NatsEventBusAdapter implements EventBus {
   async publish(event: EventEnvelope): Promise<void> {
     const subject = `proj.${event.projectId}.${event.eventType}`;
     const data = this.sc.encode(JSON.stringify(event));
-    this.nc.publish(subject, data);
-    this.logger.debug(`Published event to ${subject}`);
+
+    try {
+      this.nc.publish(subject, data);
+      await this.nc.flush();
+      this.logger.debug(`Published event to ${subject}`);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Unknown NATS error';
+      this.logger.error(`Failed to publish event to ${subject}: ${message}`);
+      throw new Error(`NATS publish failed: ${message}`);
+    }
   }
 
   async subscribe(subject: string, handler: EventHandler): Promise<void> {

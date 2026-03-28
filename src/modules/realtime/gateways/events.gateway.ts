@@ -9,10 +9,12 @@ import {
   ConnectedSocket,
 } from '@nestjs/websockets';
 import { Logger } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 import { Server, Socket } from 'socket.io';
 import { RealtimeDeliveryService } from '../services/realtime-delivery.service';
 import { PresenceService } from '../services/presence.service';
 import { SessionService } from '../services/session.service';
+import { buildRoomName, RoomType } from '@common/utils/room-name.builder';
 
 @WebSocketGateway({
   cors: { origin: '*' },
@@ -28,6 +30,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     private readonly realtimeDelivery: RealtimeDeliveryService,
     private readonly presenceService: PresenceService,
     private readonly sessionService: SessionService,
+    private readonly jwtService: JwtService,
   ) {}
 
   afterInit(server: Server) {
@@ -52,23 +55,29 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     @ConnectedSocket() client: Socket,
     @MessageBody() data: { token: string; projectId: string; consumerId: string },
   ) {
-    // TODO: Validate token
+    try {
+      this.jwtService.verify(data.token);
+    } catch {
+      return { error: 'Invalid or expired token' };
+    }
+
     this.sessionService.register(client.id, data.projectId, data.consumerId);
     await this.presenceService.markOnline(data.projectId, data.consumerId, client.id);
 
-    client.join(`${data.projectId}:user:${data.consumerId}`);
+    const room = buildRoomName(data.projectId, 'user', data.consumerId);
+    client.join(room);
     return { status: 'authenticated' };
   }
 
   @SubscribeMessage('subscription.attach')
   handleAttach(
     @ConnectedSocket() client: Socket,
-    @MessageBody() data: { type: 'topic' | 'user' | 'channel'; target: string },
+    @MessageBody() data: { type: RoomType; target: string },
   ) {
     const session = this.sessionService.getSession(client.id);
     if (!session) return { error: 'Not authenticated' };
 
-    const room = `${session.projectId}:${data.type}:${data.target}`;
+    const room = buildRoomName(session.projectId, data.type, data.target);
     client.join(room);
     return { status: 'attached', room };
   }
@@ -76,22 +85,21 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
   @SubscribeMessage('subscription.detach')
   handleDetach(
     @ConnectedSocket() client: Socket,
-    @MessageBody() data: { type: 'topic' | 'user' | 'channel'; target: string },
+    @MessageBody() data: { type: RoomType; target: string },
   ) {
     const session = this.sessionService.getSession(client.id);
     if (!session) return { error: 'Not authenticated' };
 
-    const room = `${session.projectId}:${data.type}:${data.target}`;
+    const room = buildRoomName(session.projectId, data.type, data.target);
     client.leave(room);
     return { status: 'detached', room };
   }
 
   @SubscribeMessage('event.ack')
   handleAck(
-    @ConnectedSocket() client: Socket,
+    @ConnectedSocket() _client: Socket,
     @MessageBody() data: { eventId: string },
   ) {
-    // TODO: Process event acknowledgment
     return { status: 'acked', eventId: data.eventId };
   }
 }

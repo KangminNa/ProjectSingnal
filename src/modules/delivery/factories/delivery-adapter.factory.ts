@@ -8,7 +8,7 @@ import { EmailDeliveryStrategy } from '../strategies/email-delivery.strategy';
 
 @Injectable()
 export class DeliveryAdapterFactory {
-  private readonly adapters: DeliveryAdapter[];
+  private readonly registry = new Map<ConsumerType, DeliveryAdapter>();
 
   constructor(
     realtimeStrategy: RealtimeDeliveryStrategy,
@@ -16,10 +16,21 @@ export class DeliveryAdapterFactory {
     webhookStrategy: WebhookDeliveryStrategy,
     emailStrategy: EmailDeliveryStrategy,
   ) {
-    this.adapters = [realtimeStrategy, pushStrategy, webhookStrategy, emailStrategy];
+    this.register(ConsumerType.WEBSOCKET, realtimeStrategy);
+    this.register(ConsumerType.PUSH, pushStrategy);
+    this.register(ConsumerType.WEBHOOK, webhookStrategy);
+    this.register(ConsumerType.EMAIL, emailStrategy);
+  }
+
+  register(type: ConsumerType, adapter: DeliveryAdapter): void {
+    this.registry.set(type, adapter);
   }
 
   getAdapter(consumerType: ConsumerType): DeliveryAdapter | null {
-    return this.adapters.find((a) => a.canHandle(consumerType)) ?? null;
+    return this.registry.get(consumerType) ?? null;
+  }
+
+  getSupportedTypes(): ConsumerType[] {
+    return Array.from(this.registry.keys());
   }
 }

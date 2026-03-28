@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Server } from 'socket.io';
 import { RealtimeGateway, RealtimeEvent } from '@domain/ports/outbound/realtime-gateway.port';
+import { buildRoomName } from '@common/utils/room-name.builder';
 
 @Injectable()
 export class RealtimeDeliveryService implements RealtimeGateway {
@@ -12,24 +13,20 @@ export class RealtimeDeliveryService implements RealtimeGateway {
   }
 
   async publishToUser(projectId: string, userId: string, event: RealtimeEvent): Promise<void> {
-    const room = `${projectId}:user:${userId}`;
-    this.server?.to(room).emit('event.delivery', event);
+    const room = buildRoomName(projectId, 'user', userId);
+    this.server?.to(room).emit('event.delivered', event);
     this.logger.debug(`Emitted to ${room}`);
   }
 
   async publishToTopic(projectId: string, topic: string, event: RealtimeEvent): Promise<void> {
-    const room = `${projectId}:topic:${topic}`;
-    this.server?.to(room).emit('event.delivery', event);
+    const room = buildRoomName(projectId, 'topic', topic);
+    this.server?.to(room).emit('event.delivered', event);
     this.logger.debug(`Emitted to ${room}`);
   }
 
-  async publishToChannel(
-    projectId: string,
-    channelId: string,
-    event: RealtimeEvent,
-  ): Promise<void> {
-    const room = `${projectId}:channel:${channelId}`;
-    this.server?.to(room).emit('event.delivery', event);
+  async publishToChannel(projectId: string, channelId: string, event: RealtimeEvent): Promise<void> {
+    const room = buildRoomName(projectId, 'channel', channelId);
+    this.server?.to(room).emit('event.delivered', event);
     this.logger.debug(`Emitted to ${room}`);
   }
 }
