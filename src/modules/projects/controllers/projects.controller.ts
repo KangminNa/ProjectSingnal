@@ -1,8 +1,8 @@
 import { Controller, Post, Get, Param, Body, UseGuards } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { ZodValidationPipe } from '@common/pipes/zod-validation.pipe';
-import { JwtAuthGuard } from '@modules/auth/guards/jwt-auth.guard';
-import { CurrentUser } from '@modules/auth/decorators/current-user.decorator';
+import { JwtAuthGuard } from '@common/guards/jwt-auth.guard';
+import { CurrentUser } from '@common/decorators/current-user.decorator';
 import { ProjectsService } from '../services/projects.service';
 import { ProjectsQueryService } from '../services/projects-query.service';
 import { ApiKeyRepository } from '../repositories/api-key.repository';

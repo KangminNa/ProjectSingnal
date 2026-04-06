@@ -3,7 +3,7 @@ import { ConsumersModule } from '../consumers/consumers.module';
 import { DeliveryLogsController } from './controllers/delivery-logs.controller';
 import { DeliveryOrchestratorService } from './services/delivery-orchestrator.service';
 import { DeliveryPolicyService } from './services/delivery-policy.service';
-import { DeliveryLogService } from './services/delivery-log.service';
+import { DeliveryLogsQueryService } from './services/delivery-logs-query.service';
 import { DeliveryAdapterFactory } from './factories/delivery-adapter.factory';
 import { RealtimeDeliveryStrategy } from './strategies/realtime-delivery.strategy';
 import { PushDeliveryStrategy } from './strategies/push-delivery.strategy';
@@ -22,7 +22,7 @@ import {
   providers: [
     DeliveryOrchestratorService,
     DeliveryPolicyService,
-    DeliveryLogService,
+    DeliveryLogsQueryService,
     DeliveryAdapterFactory,
     RealtimeDeliveryStrategy,
     PushDeliveryStrategy,

@@ -3,26 +3,26 @@ version: '3.8'
 services:
   postgres:
     image: postgres:16-alpine
-    container_name: relayhub-postgres
+    container_name: projectsignal-postgres
     restart: unless-stopped
     ports:
       - '5432:5432'
     environment:
-      POSTGRES_USER: relayhub
-      POSTGRES_PASSWORD: relayhub_dev
-      POSTGRES_DB: relayhub
+      POSTGRES_USER: projectsignal
+      POSTGRES_PASSWORD: projectsignal_dev
+      POSTGRES_DB: projectsignal
     volumes:
       - pgdata:/var/lib/postgresql/data
       - ./docker/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
     healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -U relayhub']
+      test: ['CMD-SHELL', 'pg_isready -U projectsignal']
       interval: 10s
       timeout: 5s
       retries: 5
 
   redis:
     image: redis:7-alpine
-    container_name: relayhub-redis
+    container_name: projectsignal-redis
     restart: unless-stopped
     ports:
       - '6379:6379'
@@ -37,7 +37,7 @@ services:
 
   nats:
     image: nats:2.10-alpine
-    container_name: relayhub-nats
+    container_name: projectsignal-nats
     restart: unless-stopped
     ports:
       - '4222:4222'

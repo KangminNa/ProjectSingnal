@@ -8,7 +8,7 @@ import { SignupDto } from '../dto/signup.dto';
 import { LoginDto } from '../dto/login.dto';
 
 @Injectable()
-export class AuthService {
+export class AuthCommandService {
   constructor(
     @Inject(USER_REPOSITORY) private readonly userRepo: UserRepository,
     private readonly jwtService: JwtService,
@@ -50,14 +50,6 @@ export class AuthService {
       accessToken: token,
       user: { id: user.id, email: user.email, name: user.name },
     };
-  }
-
-  async getProfile(userId: string) {
-    const user = await this.userRepo.findById(userId);
-    if (!user) {
-      throw new UnauthorizedException('User not found');
-    }
-    return { id: user.id, email: user.email, name: user.name };
   }
 
   private generateToken(userId: string, email: string): string {

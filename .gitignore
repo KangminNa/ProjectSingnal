@@ -1,5 +1,6 @@
 # compiled output
 dist/
+build/
 
 # dependencies
 node_modules/
@@ -9,6 +10,7 @@ node_modules/
 .vscode/
 *.swp
 *.swo
+*.code-workspace
 
 # OS
 .DS_Store
@@ -16,16 +18,30 @@ Thumbs.db
 
 # env
 .env
+.env.local
+.env.*.local
 
 # testing
 coverage/
 
 # debug
-npm-debug.log
-yarn-debug.log
-yarn-error.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
 
 # Docker volumes
 pgdata/
 redisdata/
 natsdata/
+
+# TypeScript
+*.tsbuildinfo
+
+# Drizzle
+drizzle/meta/_journal.json.bak
+
+# tmp
+tmp/
+temp/
+*.tmp

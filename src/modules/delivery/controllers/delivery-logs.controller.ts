@@ -1,17 +1,14 @@
-import { Controller, Get, Param, Query, Inject, UseGuards } from '@nestjs/common';
+import { Controller, Get, Param, Query, UseGuards } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
-import { DELIVERY_LOG_REPOSITORY } from '@common/constants/injection-tokens';
-import { DeliveryLogRepository } from '@domain/ports/outbound/repositories/delivery-log.repository.port';
-import { JwtAuthGuard } from '@modules/auth/guards/jwt-auth.guard';
+import { JwtAuthGuard } from '@common/guards/jwt-auth.guard';
+import { DeliveryLogsQueryService } from '../services/delivery-logs-query.service';
 
 @ApiTags('delivery-logs')
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
 @Controller('v1/projects/:projectId/delivery-logs')
 export class DeliveryLogsController {
-  constructor(
-    @Inject(DELIVERY_LOG_REPOSITORY) private readonly deliveryLogRepo: DeliveryLogRepository,
-  ) {}
+  constructor(private readonly queryService: DeliveryLogsQueryService) {}
 
   @Get()
   @ApiOperation({ summary: 'List delivery logs for a project' })
@@ -20,7 +17,7 @@ export class DeliveryLogsController {
     @Query('limit') limit?: string,
     @Query('offset') offset?: string,
   ) {
-    return this.deliveryLogRepo.listByProject(
+    return this.queryService.listByProject(
       projectId,
       limit ? parseInt(limit, 10) : 50,
       offset ? parseInt(offset, 10) : 0,
@@ -30,6 +27,6 @@ export class DeliveryLogsController {
   @Get('stats')
   @ApiOperation({ summary: 'Get delivery stats' })
   async stats(@Param('projectId') projectId: string) {
-    return this.deliveryLogRepo.countByProject(projectId);
+    return this.queryService.getStatsByProject(projectId);
   }
 }

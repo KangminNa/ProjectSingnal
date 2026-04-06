@@ -4,16 +4,20 @@ import { DeliveryLogRepository } from '@domain/ports/outbound/repositories/deliv
 import { DeliveryLog } from '@domain/entities/delivery-log.entity';
 
 @Injectable()
-export class DeliveryLogService {
+export class DeliveryLogsQueryService {
   constructor(
     @Inject(DELIVERY_LOG_REPOSITORY) private readonly deliveryLogRepo: DeliveryLogRepository,
   ) {}
 
-  async listByProject(projectId: string): Promise<DeliveryLog[]> {
-    return this.deliveryLogRepo.listByProject(projectId);
+  async listByProject(projectId: string, limit = 50, offset = 0): Promise<DeliveryLog[]> {
+    return this.deliveryLogRepo.listByProject(projectId, limit, offset);
   }
 
   async listByEvent(eventId: string): Promise<DeliveryLog[]> {
     return this.deliveryLogRepo.listByEvent(eventId);
+  }
+
+  async getStatsByProject(projectId: string): Promise<Record<string, number>> {
+    return this.deliveryLogRepo.countByProject(projectId);
   }
 }

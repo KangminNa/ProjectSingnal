@@ -1,4 +1,4 @@
-# ProjectSignal (RelayHub)
+# ProjectSignal
 
 **Multi-tenant Event Delivery Infrastructure** — 이벤트 수집부터 실시간/비동기 배달까지 하나의 플랫폼으로 관리하는 통합 이벤트 딜리버리 인프라.
 
@@ -214,7 +214,7 @@ cp .env.example .env
 `.env` 주요 설정:
 
 ```env
-DATABASE_URL=postgresql://relayhub:relayhub@localhost:5432/relayhub
+DATABASE_URL=postgresql://projectsignal:projectsignal_dev@localhost:5432/projectsignal
 REDIS_HOST=localhost
 REDIS_PORT=6379
 NATS_URL=nats://localhost:4222

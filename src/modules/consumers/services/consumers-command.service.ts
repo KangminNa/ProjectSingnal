@@ -6,7 +6,7 @@ import { Consumer } from '@domain/entities/consumer.entity';
 import { ConsumerType } from '@common/types/consumer.types';
 
 @Injectable()
-export class ConsumersService {
+export class ConsumersCommandService {
   constructor(@Inject(CONSUMER_REPOSITORY) private readonly consumerRepo: ConsumerRepository) {}
 
   async register(projectId: string, dto: RegisterConsumerDto): Promise<Consumer> {
@@ -17,9 +17,5 @@ export class ConsumersService {
       endpoint: dto.endpoint,
       authConfigJson: dto.authConfigJson,
     });
-  }
-
-  async listByProject(projectId: string): Promise<Consumer[]> {
-    return this.consumerRepo.listByProject(projectId);
   }
 }

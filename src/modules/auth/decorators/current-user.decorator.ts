@@ -1,9 +1,2 @@
-import { createParamDecorator, ExecutionContext } from '@nestjs/common';
-
-export const CurrentUser = createParamDecorator(
-  (data: string | undefined, ctx: ExecutionContext) => {
-    const request = ctx.switchToHttp().getRequest();
-    const user = request.user;
-    return data ? user?.[data] : user;
-  },
-);
+// Re-export from canonical location — all new code should import from @common/decorators/current-user.decorator
+export { CurrentUser } from '@common/decorators/current-user.decorator';
