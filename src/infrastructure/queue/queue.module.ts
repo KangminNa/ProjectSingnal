@@ -1,6 +1,6 @@
 import { Global, Module } from '@nestjs/common';
 import { BullMqJobQueueAdapter } from './bullmq-job-queue.adapter';
-import { JOB_QUEUE } from '@common/constants/injection-tokens';
+import { JOB_QUEUE } from '@core/injection-tokens';
 
 @Global()
 @Module({

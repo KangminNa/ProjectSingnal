@@ -1,0 +1,24 @@
+/**
+ * ============================================================
+ *  ProjectSignal — Dependency Injection Tokens
+ * ============================================================
+ *  NestJS DI 컨테이너에서 사용하는 모든 토큰을 정의합니다.
+ * ============================================================
+ */
+
+// Infrastructure
+export const DRIZZLE = Symbol('DRIZZLE');
+export const EVENT_BUS = Symbol('EVENT_BUS');
+export const JOB_QUEUE = Symbol('JOB_QUEUE');
+export const PRESENCE_STORE = Symbol('PRESENCE_STORE');
+
+// Repositories
+export const PROJECT_REPOSITORY = Symbol('PROJECT_REPOSITORY');
+export const API_KEY_REPOSITORY = Symbol('API_KEY_REPOSITORY');
+export const PUBLISHER_REPOSITORY = Symbol('PUBLISHER_REPOSITORY');
+export const CONSUMER_REPOSITORY = Symbol('CONSUMER_REPOSITORY');
+export const SUBSCRIPTION_REPOSITORY = Symbol('SUBSCRIPTION_REPOSITORY');
+export const DELIVERY_LOG_REPOSITORY = Symbol('DELIVERY_LOG_REPOSITORY');
+export const DELIVERY_POLICY_REPOSITORY = Symbol('DELIVERY_POLICY_REPOSITORY');
+export const EVENT_INGEST_LOG_REPOSITORY = Symbol('EVENT_INGEST_LOG_REPOSITORY');
+export const USER_REPOSITORY = Symbol('USER_REPOSITORY');

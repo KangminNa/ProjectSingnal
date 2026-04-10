@@ -1,7 +1,7 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import Redis from 'ioredis';
-import { PresenceStore } from '@domain/ports/outbound/presence-store.port';
+import { PresenceStore } from '@core/event-bus';
 import { REDIS_CLIENT } from './redis.provider';
 
 const DEFAULT_PRESENCE_TTL = 300;

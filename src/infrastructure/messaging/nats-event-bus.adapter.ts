@@ -1,7 +1,7 @@
 import { Injectable, Inject, Logger } from '@nestjs/common';
 import { NatsConnection, StringCodec, JetStreamClient } from 'nats';
-import { EventBus, EventHandler } from '@domain/ports/outbound/event-bus.port';
-import { EventEnvelope } from '@domain/types/event-envelope';
+import { EventBus, EventHandler } from '@core/event-bus';
+import { EventEnvelope } from '@core/event-bus';
 import { NATS_CONNECTION } from './nats.provider';
 
 @Injectable()

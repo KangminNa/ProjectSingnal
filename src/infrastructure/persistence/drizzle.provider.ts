@@ -2,7 +2,7 @@ import { Provider } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { drizzle } from 'drizzle-orm/postgres-js';
 import * as postgres from 'postgres';
-import { DRIZZLE } from '@common/constants/injection-tokens';
+import { DRIZZLE } from '@core/injection-tokens';
 import * as schema from './schema';
 
 export const DrizzleProvider: Provider = {

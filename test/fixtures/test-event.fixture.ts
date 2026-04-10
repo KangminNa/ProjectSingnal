@@ -1,4 +1,4 @@
-import { EventEnvelope } from '@domain/types/event-envelope';
+import { EventEnvelope } from '@core/event-bus';
 
 export function createTestEvent(overrides: Partial<EventEnvelope> = {}): EventEnvelope {
   return {

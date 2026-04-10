@@ -4,9 +4,7 @@ import { MessagingModule } from './messaging/messaging.module';
 import { CacheModule } from './cache/cache.module';
 import { QueueModule } from './queue/queue.module';
 import { SocketIoModule } from './transport/socketio/socketio.module';
-import { WebhookModule } from './transport/webhook/webhook.module';
-import { PushModule } from './transport/push/push.module';
-import { EmailModule } from './transport/email/email.module';
+import { HttpTransportModule } from './transport/http/http.module';
 import { ObservabilityModule } from './observability/observability.module';
 
 @Module({
@@ -16,9 +14,7 @@ import { ObservabilityModule } from './observability/observability.module';
     CacheModule,
     QueueModule,
     SocketIoModule,
-    WebhookModule,
-    PushModule,
-    EmailModule,
+    HttpTransportModule,
     ObservabilityModule,
   ],
   exports: [
@@ -27,9 +23,7 @@ import { ObservabilityModule } from './observability/observability.module';
     CacheModule,
     QueueModule,
     SocketIoModule,
-    WebhookModule,
-    PushModule,
-    EmailModule,
+    HttpTransportModule,
   ],
 })
 export class InfrastructureModule {}

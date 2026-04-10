@@ -1,7 +1,7 @@
 import { Global, Module } from '@nestjs/common';
 import { RedisProvider } from './redis.provider';
 import { RedisPresenceAdapter } from './redis-presence.adapter';
-import { PRESENCE_STORE } from '@common/constants/injection-tokens';
+import { PRESENCE_STORE } from '@core/injection-tokens';
 
 @Global()
 @Module({

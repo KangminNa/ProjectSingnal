@@ -1,13 +1,19 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Server } from 'socket.io';
-import { TransportAdapter } from '@domain/ports/outbound/transport.adapter.port';
-import { ConsumerType } from '@domain/types/consumer.types';
-import { DeliveryInput, DeliveryResult } from '@domain/types/delivery.types';
+import { TransportAdapter } from '@core/transport';
+import { TransportProtocol } from '@core/enums';
+import type { TransportRequest, TransportResponse } from '@core/transport';
 import { buildRoomName } from '@common/utils/room-name.builder';
 
+/**
+ * SocketIoTransportAdapter
+ *
+ * WebSocket(Socket.IO)으로 이벤트를 실시간 전달하는 어댑터.
+ * Gateway에서 setServer()를 호출해 Server 인스턴스를 주입받습니다.
+ */
 @Injectable()
 export class SocketIoTransportAdapter implements TransportAdapter {
-  readonly type = ConsumerType.WEBSOCKET;
+  readonly protocol = TransportProtocol.WEBSOCKET;
 
   private readonly logger = new Logger(SocketIoTransportAdapter.name);
   private server: Server | null = null;
@@ -16,57 +22,37 @@ export class SocketIoTransportAdapter implements TransportAdapter {
     this.server = server;
   }
 
-  async send(input: DeliveryInput): Promise<DeliveryResult> {
-    const room = buildRoomName(input.projectId, 'user', input.consumerId);
+  async send(request: TransportRequest): Promise<TransportResponse> {
+    if (!this.server) {
+      return this.fail('WebSocket server not initialized', true);
+    }
+
+    const room = buildRoomName(request.projectId, 'user', request.consumerId);
 
     try {
-      if (!this.server) {
-        return {
-          success: false,
-          channel: 'realtime',
-          error: 'WebSocket server not initialized',
-          retryable: true,
-        };
-      }
-
       this.server.to(room).emit('event.delivered', {
-        eventType: input.channel,
-        payload: input.payload,
+        eventId: request.eventId,
+        payload: request.payload,
+        metadata: request.metadata,
       });
 
       this.logger.debug(`Emitted to ${room}`);
 
       return {
         success: true,
-        channel: 'realtime',
+        protocol: TransportProtocol.WEBSOCKET,
         deliveredAt: new Date(),
-        details: { type: 'realtime', room },
-      };
-    } catch (error) {
-      return {
-        success: false,
-        channel: 'realtime',
-        error: error instanceof Error ? error.message : 'Unknown error',
         retryable: false,
       };
+    } catch (error) {
+      return this.fail(
+        error instanceof Error ? error.message : 'Unknown error',
+        false,
+      );
     }
   }
 
-  async publishToUser(projectId: string, userId: string, event: { eventType: string; payload: Record<string, unknown> }): Promise<void> {
-    const room = buildRoomName(projectId, 'user', userId);
-    this.server?.to(room).emit('event.delivered', event);
-    this.logger.debug(`Emitted to ${room}`);
-  }
-
-  async publishToTopic(projectId: string, topic: string, event: { eventType: string; payload: Record<string, unknown> }): Promise<void> {
-    const room = buildRoomName(projectId, 'topic', topic);
-    this.server?.to(room).emit('event.delivered', event);
-    this.logger.debug(`Emitted to ${room}`);
-  }
-
-  async publishToChannel(projectId: string, channelId: string, event: { eventType: string; payload: Record<string, unknown> }): Promise<void> {
-    const room = buildRoomName(projectId, 'channel', channelId);
-    this.server?.to(room).emit('event.delivered', event);
-    this.logger.debug(`Emitted to ${room}`);
+  private fail(error: string, retryable: boolean): TransportResponse {
+    return { success: false, protocol: TransportProtocol.WEBSOCKET, error, retryable };
   }
 }

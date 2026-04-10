@@ -1,7 +1,7 @@
 import { Injectable, Logger, OnModuleDestroy } from '@nestjs/common';
 import { Queue } from 'bullmq';
 import { ConfigService } from '@nestjs/config';
-import { JobQueue, JobOptions } from '@domain/ports/outbound/job-queue.port';
+import { JobQueue, JobOptions } from '@core/event-bus';
 
 @Injectable()
 export class BullMqJobQueueAdapter implements JobQueue, OnModuleDestroy {

@@ -13,8 +13,8 @@ import { JwtService } from '@nestjs/jwt';
 import { Server, Socket } from 'socket.io';
 import { SocketIoTransportAdapter } from './socketio-transport.adapter';
 import { SessionService } from './session.service';
-import { PRESENCE_STORE } from '@common/constants/injection-tokens';
-import { PresenceStore } from '@domain/ports/outbound/presence-store.port';
+import { PRESENCE_STORE } from '@core/injection-tokens';
+import { PresenceStore } from '@core/event-bus';
 import { buildRoomName, RoomType } from '@common/utils/room-name.builder';
 
 @WebSocketGateway({

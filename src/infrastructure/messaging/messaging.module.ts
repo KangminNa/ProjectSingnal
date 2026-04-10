@@ -1,7 +1,7 @@
 import { Global, Module } from '@nestjs/common';
 import { NatsProvider } from './nats.provider';
 import { NatsEventBusAdapter } from './nats-event-bus.adapter';
-import { EVENT_BUS } from '@common/constants/injection-tokens';
+import { EVENT_BUS } from '@core/injection-tokens';
 
 @Global()
 @Module({
