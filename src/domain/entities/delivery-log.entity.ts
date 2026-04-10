@@ -1,4 +1,4 @@
-import { DeliveryChannel, DeliveryStatus } from '@common/types/delivery.types';
+import { DeliveryChannel, DeliveryStatus } from '@domain/types/delivery.types';
 
 export interface DeliveryLog {
   id: string;

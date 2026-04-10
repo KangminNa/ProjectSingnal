@@ -1,5 +1,5 @@
 import { DeliveryLog } from '@domain/entities/delivery-log.entity';
-import { DeliveryChannel, DeliveryStatus } from '@common/types/delivery.types';
+import { DeliveryChannel, DeliveryStatus } from '@domain/types/delivery.types';
 
 export interface CreateDeliveryLogInput {
   projectId: string;

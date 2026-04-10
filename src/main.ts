@@ -4,7 +4,7 @@ import { ConfigService } from '@nestjs/config';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { GlobalExceptionFilter } from '@common/exceptions/http-exception.filter';
-import { LoggingInterceptor } from '@common/interceptors/logging.interceptor';
+import { LoggingInterceptor } from '@api/interceptors/logging.interceptor';
 
 async function bootstrap() {
   const logger = new Logger('Bootstrap');

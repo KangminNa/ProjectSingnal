@@ -1,5 +1,5 @@
-import { ConsumerType } from '@common/types/consumer.types';
-import { DeliveryChannel } from '@common/types/delivery.types';
+import { ConsumerType } from '@domain/types/consumer.types';
+import { DeliveryChannel } from '@domain/types/delivery.types';
 
 const CONSUMER_TO_CHANNEL: Record<ConsumerType, DeliveryChannel> = {
   [ConsumerType.WEBSOCKET]: 'realtime',

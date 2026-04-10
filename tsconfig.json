@@ -22,7 +22,8 @@
       "@config/*": ["src/config/*"],
       "@domain/*": ["src/domain/*"],
       "@infrastructure/*": ["src/infrastructure/*"],
-      "@modules/*": ["src/modules/*"]
+      "@application/*": ["src/application/*"],
+      "@api/*": ["src/api/*"]
     }
   },
   "exclude": ["node_modules", "dist", "dashboard"]

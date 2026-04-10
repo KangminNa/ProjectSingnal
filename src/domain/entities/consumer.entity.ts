@@ -1,4 +1,4 @@
-import { ConsumerType } from '@common/types/consumer.types';
+import { ConsumerType } from '@domain/types/consumer.types';
 
 export interface Consumer {
   id: string;

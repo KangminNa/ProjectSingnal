@@ -1,4 +1,4 @@
-import { EventEnvelope } from '@common/types/event-envelope';
+import { EventEnvelope } from '@domain/types/event-envelope';
 
 export type EventHandler = (event: EventEnvelope) => Promise<void>;
 

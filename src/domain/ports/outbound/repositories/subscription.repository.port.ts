@@ -1,5 +1,5 @@
 import { Subscription } from '@domain/entities/subscription.entity';
-import { ConsumerTarget } from '@common/types/consumer.types';
+import { ConsumerTarget } from '@domain/types/consumer.types';
 
 export interface CreateSubscriptionInput {
   projectId: string;

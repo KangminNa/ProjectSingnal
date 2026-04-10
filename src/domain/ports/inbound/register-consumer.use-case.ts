@@ -1,5 +1,5 @@
 import { Consumer } from '@domain/entities/consumer.entity';
-import { ConsumerType } from '@common/types/consumer.types';
+import { ConsumerType } from '@domain/types/consumer.types';
 
 export interface RegisterConsumerCommand {
   projectId: string;

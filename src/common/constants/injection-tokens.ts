@@ -1,8 +1,8 @@
 export const EVENT_BUS = Symbol('EVENT_BUS');
-export const REALTIME_GATEWAY = Symbol('REALTIME_GATEWAY');
 export const JOB_QUEUE = Symbol('JOB_QUEUE');
 export const PRESENCE_STORE = Symbol('PRESENCE_STORE');
 export const DRIZZLE = Symbol('DRIZZLE');
+export const TRANSPORT_REGISTRY = Symbol('TRANSPORT_REGISTRY');
 
 export const PROJECT_REPOSITORY = Symbol('PROJECT_REPOSITORY');
 export const API_KEY_REPOSITORY = Symbol('API_KEY_REPOSITORY');
